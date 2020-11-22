@@ -1,0 +1,211 @@
+# This is a sample Python script.
+
+# Press Shift+F10 to execute it or replace it with your code.
+# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+
+import random
+import risk
+
+colors = ['Red', 'Blue', 'Green', 'Yellow', 'Black', 'Pink', 'White', 'Grey']
+
+def press_any_key():
+    input('\nPress any key to continue...\n')
+
+
+def lang_enumeration(and_expression='and', *kwarg):
+    text = ''
+    for item in kwarg:
+        text += ''
+
+    return text
+
+
+def throw_dice(n, min=1, max=6):
+    '''
+    Simulates throwing dices.
+    :param n:
+    Number of dices
+    :return:
+    List of N dices
+    '''
+    dices = []
+
+    for x in range(n):
+        dices.append(random.randint(min, max))
+
+    return dices
+
+
+def compare_dices(dices1, dices2):
+    '''
+    Compares two sets of dices and returns the winner.
+    :param dices1:
+    List of integers with dice numbers.
+    :param dices2:
+    List of integers with dice numbers.
+    :return:
+    List of integers with winning dice numbers.
+    '''
+    ordered_1 = sorted(dices1)
+    ordered_2 = sorted(dices2)
+    for x in range(min(len(ordered_1), len(ordered_2))):
+        pass
+
+
+def show_dices(dices):
+    text = ''
+    for dice in sorted(dices):
+        text += f'({dice}) '
+    print(text)
+
+
+def load_countries(countries_file='countries.txt', countries_connections_file='country_connections.txt'):
+    countries = []
+    countries_dict = {}
+
+    print('Loading countries from the database...')
+
+    # try:
+    with open(countries_file, 'r') as countries_fp:
+        for file_line in countries_fp.readlines():
+            country_id, country_name = file_line.rstrip().split(';')
+            country_id = int(country_id)
+            new_country = risk.Country(country_name, country_id)
+            countries.append(new_country)
+            countries_dict[country_id] = new_country
+        countries_fp.close()
+
+    with open(countries_connections_file,'r') as connections_fp:
+        for file_line in connections_fp.readlines():
+            #print("[{}]".format(file_line.rstrip()))
+            country_id, neighbour_id = file_line.rstrip().split(';')
+            country_id = int(country_id)
+            neighbour_id = int(neighbour_id)
+            #print("cid [{}] nid [{}]".format(countries_dict[country_id],neighbour_id))
+            #print("country [{}] has neighbour [{}]".format(countries_dict[country_id],countries_dict[neighbour_id]))
+            countries_dict[country_id].add_neighbour(countries_dict[neighbour_id])
+        connections_fp.close()
+
+    print('Loaded following countries:\n')
+    for c in countries:
+        print(c)
+
+    input('\nPress any key to continue...')
+
+    return countries
+    # except:
+    #    print("Problem reading data from files.")
+
+
+def show_banner():
+    print("\nWelcome to Patricio's TEG!\n\nLet's play.\n")
+
+
+def prompt_players(game):
+    '''
+    Prompts for players and sets name and color.
+
+    :return:
+    A list of objects of type Player
+    '''
+    names_and_colors = []
+
+    min_num = 2
+    max_num = 6
+
+    number_players = 0
+
+    while not (number_players >= min_num and number_players <= max_num):
+        number_players = int(input('How many players will be playing ({}-{})? '.format(min_num, max_num)))
+
+    print(f"\nAlright, we have {number_players} today!\n")
+
+    for x in range(number_players):
+        name = input("Please enter player {}'s name: ".format(x + 1))
+        p_color = colors.pop()
+        print("Player {} is {} with color {}.\n".format(x + 1, name, p_color))
+        names_and_colors.append((name, p_color))
+
+    print("Because you cannot have people pick colors. You'll have a bunch of guys fighting over who's Mr. Black.\n")
+
+    game.AssignPlayers(names_and_colors)
+
+    press_any_key()
+
+
+def deal_initial_countries(game):
+    '''
+
+    :param game:
+    :return:
+    '''
+
+    countries_per_player = int(len(game.countries) / len(game.players))
+    countries_raffle = len(game.countries) % len(game.players)
+
+    print(f"\nDealing countries to players now...\n")
+    print(f"Total countries: {len(game.countries)}")
+    print(f"Total players: {len(game.players)}")
+    print(f"Countries per player: {countries_per_player}")
+    print(f"Remaining countries after first round of dealing countries: {countries_raffle}")
+
+    press_any_key()
+
+    game.DealInitialCountriesEqually()
+
+    for p in game.players:
+        p_c = game.GetCountries(p)
+        print(f'\n{p} got {len(p_c)}:')
+        for c in game.GetCountries(p):
+            print(c)
+
+    press_any_key()
+
+
+def deal_rest_countries_dice(game):
+
+    free_countries = game.GetUnassignedCountries()
+    players_dices = []
+
+    print("\nWe still have to deal {} countries, but we'll use dices for that:".format(len(free_countries)))
+
+    for p in game.players():
+        input(f"{p.name}, press any key to roll one dice...")
+        dice = throw_dice(1)
+        players_dices.append((p, dice))
+        print(f"{p.name} got {dice}")
+
+
+
+def play():
+    '''
+    Main orchestration function. Call this to play.
+    ´Will call for the user interaction functions.
+
+    :return:
+    Nothing
+    '''
+    game = risk.Game()
+
+    # We shuffle colors once before playing, then they get assigned to players in create_players()
+    random.shuffle(colors)
+
+    show_banner()
+
+    game.LoadCountriesFromFile()
+    game.InitializeCountriesDeck()
+
+    for c in game.countries:
+       print(f'Country {c.name} loaded.')
+    press_any_key()
+
+    prompt_players(game)
+    # Deal countries to players, first round
+    deal_initial_countries(game)
+    # Raffle for the rest of remaining cards if needed
+    deal_rest_countries_dice()
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+
+    play()

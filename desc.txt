@@ -1,0 +1,96 @@
+#######################################################
+
+Funciones generales
++ TirarDados(cantidad de dados)
+  devuelve tupla de valores 1-6 en la cantidad deseada
++ CompararDados(dados1, dados2)
+  devuelve dados ganadores
+
+################################################ Clases
+
+# Pais
+- Nombre
+- Países vecinos
+- Continente?
+- Cantidad de tropas
+- Jugador?
+
+# Continente
+- Países?
+- Puntos
+
+# Jugador
+- Objetivo
+- Objetivo cumplido
+- Nombre
+- Países
+- Continentes
+- Color
+- Ejercitos por ubicar
+
++ Atacar(país atacante, país a atacar, cantidad de tropas)
+
+# Objetivo - Herencia
+- Jugador
+- Cumplido
+
+## Objetivo de conquista
+- Países
+- Continentes
+
+## Objetivo de conquista general
+- X Países
+
+## Objetivo de aniquilación
+- Jugador
+
+############
+# Batalla?
+- Atacante
+- Defensor
+- Tropas defensor
+- Tropas atacante
+- Resultado
+
+
+############################################### Flow del juego
+
+- Registrar jugadores (nombre, color)
+- Repartir objetivos
+- Repartir países
+- Repartir países sobrantes (tirar dados)
+- Tirar dados para definir al primer jugador
+- Asignar 5 fichas a cada jugador
+- Cada jugador pone estas fichas
+- Asignar 3 fichas a cada jugador
+- Cada jugador pone estas fichas
+- Juega cada jugador
+  - Jugador ataca con X fichas
+    - Regiones tienen que ser vecinas
+    - Tiene que haber más de un ejército en el país atacante
+    - Contar ejércitos del país atacante menos uno
+    - Jugador tira dados
+    - Defensor tira dados
+    - comparar dados
+    - Restar fichas
+    - Si fichas en país defendiendo es 0 entonces atacante mueve X fichas
+  - Ganó el jugador? ## FIN ##
+  - Dar una tarjeta de país si hubo alguna conquista
+  - Movilización
+    - Sólo los ejércitos que se encuentran en el turno actual, menos uno que tiene que quedar
+  - Reparto de fichas según los territorios
+    - Por jugador
+      - cantidad de países
+      - continentes
+      - canje de tarjeta única por dos fichas al país (marcar como canjeada)
+      - entrega de tarjetas a cambio de 4, 7 o 10 ejércitos
+
+##############################################
+
+- Jugamos TEG?
+  - Cargar países
+  - Cargar objetivos
+  - Alta jugadores
+  - Repartir objetivos
+  - Repartir países
+  - Tirar dados (N) - lista de N
