@@ -391,6 +391,21 @@ class Game():
         return countries_to_deal
 
 
+    def AddTroopsTooAllCountries(self, number_of_troops):
+        '''
+        Adds a number of armies to all countries. Meant to be used starting the game.
+
+        :param number_of_troops:
+        An integer with the number of troops to be added.
+        :return:
+        '''
+        if self.countries == None or len(self.countries):
+            raise Exception('Cannot use if countries has not been initialized.')
+
+        for c in self.countries:
+            c.armies += 1
+
+
     def CheckIfWinner(self):
         '''
         Check if the game has a winner already, evaluating whether
