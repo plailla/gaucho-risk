@@ -166,15 +166,27 @@ def deal_rest_countries_dice(game):
 
     free_countries = game.GetUnassignedCountries()
     players_dices = []
+    winner = None
 
     print("\nWe still have to deal {} countries, but we'll use dices for that:".format(len(free_countries)))
 
-    for p in game.players():
-        input(f"{p.name}, press any key to roll one dice...")
-        dice = throw_dice(1)
-        players_dices.append((p, dice))
-        print(f"{p.name} got {dice}")
+    for c in free_countries:
+        print(f'Dealing country {c.name}:')
+        max_value = 0
+        for p in game.players:
+            input(f"{p.name}, press any key to roll one dice.")
+            dice = throw_dice(1)[0]
+            players_dices.append((p, dice))
+            print(f"{p.name} got {dice}.")
+            if dice > max_value:
+                max_value = dice
+                winner = p
 
+        print(f'Player {winner.name} receives {c.name}.')
+        c.SetPlayer(winner)
+            ### What happens if two people get the same? or three?
+
+    press_any_key()
 
 
 def play():
@@ -199,11 +211,25 @@ def play():
        print(f'Country {c.name} loaded.')
     press_any_key()
 
+    game.LoadWorldDominationObjective(0.6)
+    print(f'\nWorld domination set to {game.world_objective.amount_countries}.\n')
+
     prompt_players(game)
     # Deal countries to players, first round
     deal_initial_countries(game)
     # Raffle for the rest of remaining cards if needed
-    deal_rest_countries_dice()
+    deal_rest_countries_dice(game)
+
+    print('\nInitial status of board\n')
+    print('Countries:')
+    for c in game.countries:
+        print(f' - {c}')
+
+    print('\nPlayers:')
+    for p in game.players:
+        print(f' - {p}')
+
+    press_any_key()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

@@ -24,6 +24,7 @@ class Player():
         # These get filled by methods after the game starts
         self.objectives = []
         self.countries = []
+        self.world_objective = None
 
 
     def __str__(self):
@@ -358,3 +359,19 @@ class Game():
                     return p
 
         return None
+
+
+    def LoadWorldDominationObjective(self, percent_to_conquer):
+        '''
+        Creates the world domination objective, which is based on
+        the total number of countries.
+
+        :param percent_to_conquer:
+        A floating point number representing the percentage number of countries
+        to be conquered. Must be between greater than zero and lower or equal than one.
+        :return:
+        '''
+        if self.countries == None or len(self.countries) == 0:
+            raise Exception('Cannot do this if countries have not been loaded yet.')
+        else:
+            self.world_objective = WorldDominationObjective(round(percent_to_conquer * len(self.countries)))
