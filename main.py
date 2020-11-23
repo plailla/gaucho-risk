@@ -193,8 +193,29 @@ def demo_load_players(game, n):
     players = []
     if n > 1 and n < 7:
         for x in range(n):
-            players.append(risk.Player(f'Player {x}', colors.pop()))
+            players.append(risk.Player(f'Player {x+1}', colors.pop()))
         game.players = players
+
+
+def demo_deal_initial_countries(game):
+    game.DealInitialCountriesEqually()
+
+
+def demo_deal_rest_countries_dice(game):
+    free_countries = game.GetUnassignedCountries()
+    players_dices = []
+
+    for c in free_countries:
+        max_value = 0
+        for p in game.players:
+            dice = throw_dice(1)[0]
+            players_dices.append((p, dice))
+            if dice > max_value:
+                max_value = dice
+                winner = p
+        print(f'Player {winner.name} receives {c.name}.')
+        c.SetPlayer(winner)
+            ### What happens if two people get the same? or three?
 
 
 def play():
@@ -223,15 +244,21 @@ def play():
     print(f'\nWorld domination set to {game.world_objective.amount_countries}.\n')
 
     #prompt_players(game)
-    demo_load_players(4)
+    demo_load_players(game,4)
     # Deal countries to players, first round
-    deal_initial_countries(game)
+    demo_deal_initial_countries(game)
     # Raffle for the rest of remaining cards if needed
-    deal_rest_countries_dice(game)
+    demo_deal_rest_countries_dice(game)
 
     game.AddTroopsTooAllCountries(1)
-    for c in game.countries:
-        c.armies += random.randint(0,5)
+    for n in (5, 3):
+        for p in game.players:
+            print(f'{p} adding now {n} armies.')
+            for x in range(n):
+                p_cs = game.GetCountries(p)
+                c = p_cs[random.randint(0, len(p_cs) - 1)]
+                print(f'Adding randomly one army to: {c}')
+                c.armies += 1
 
     print('\nInitial status of board\n')
     print('Countries:')
