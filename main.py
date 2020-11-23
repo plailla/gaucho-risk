@@ -189,6 +189,14 @@ def deal_rest_countries_dice(game):
     press_any_key()
 
 
+def demo_load_players(game, n):
+    players = []
+    if n > 1 and n < 7:
+        for x in range(n):
+            players.append(risk.Player(f'Player {x}', colors.pop()))
+        game.players = players
+
+
 def play():
     '''
     Main orchestration function. Call this to play.
@@ -214,11 +222,16 @@ def play():
     game.LoadWorldDominationObjective(0.6)
     print(f'\nWorld domination set to {game.world_objective.amount_countries}.\n')
 
-    prompt_players(game)
+    #prompt_players(game)
+    demo_load_players(4)
     # Deal countries to players, first round
     deal_initial_countries(game)
     # Raffle for the rest of remaining cards if needed
     deal_rest_countries_dice(game)
+
+    game.AddTroopsTooAllCountries(1)
+    for c in game.countries:
+        c.armies += random.randint(0,5)
 
     print('\nInitial status of board\n')
     print('Countries:')
