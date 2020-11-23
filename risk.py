@@ -54,25 +54,29 @@ class Country():
             text += f" - {self.player.name}"
 
         if len(self.neighbours) > 0:
-            # Some consideration to punctuation while enumerating
-            if len(self.neighbours) == 1:
-                text += f' - with neighbour {self.neighbours[0].name}'
-            elif len(self.neighbours) == 2:
-                text += f' - with neighbours {self.neighbours[0].name} and {self.neighbours[1].name}'
-            else:
-                text += f' - with neighbours '
-                for c in self.neighbours:
-                    text += f'{c.name}, '
+            # # Some consideration to punctuation while enumerating
+            # if len(self.neighbours) == 1:
+            #     text += f' - with neighbour {self.neighbours[0].name}'
+            # elif len(self.neighbours) == 2:
+            #     text += f' - with neighbours {self.neighbours[0].name} and {self.neighbours[1].name}'
+            # else:
+            #     text += f' - with neighbours '
+            #     for c in self.neighbours:
+            #         text += f'{c.name}, '
+            #
+            #     # Quick and dirty way to fix the end of the list
+            #
+            #     # Take out the trailing ', ' from the enumeration
+            #     text = re.sub(r', $', '', text)
+            #
+            #     # We want to replace not the first but the last occurence of ', '
+            #     # and replace it with 'and', so we reverse the string to leave the last occurence
+            #     # as first. So we need to reverse and then replace ' ,'
+            #     text = text[::-1].replace(' ,', f' {and_text[::-1]} ',1)[::-1]
+            text += ' - neighbours: '
 
-                # Quick and dirty way to fix the end of the list
-
-                # Take out the trailing ', ' from the enumeration
-                text = re.sub(r', $', '', text)
-
-                # We want to replace not the first but the last occurence of ', '
-                # and replace it with 'and', so we reverse the string to leave the last occurence
-                # as first. So we need to reverse and then replace ' ,'
-                text = text[::-1].replace(' ,', f' {and_text[::-1]} ',1)[::-1]
+            for sorted_country in sorted(self.neighbours, key=lambda x: x.armies, reverse=True):
+                text += f'{sorted_country.name} ({sorted_country.armies}), '
 
         return text
 
