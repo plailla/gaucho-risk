@@ -41,6 +41,7 @@ class Country():
 
         # Gets assigned during the game
         self.player = None
+        self.armies = 0
 
 
     def __str__(self):
@@ -306,8 +307,56 @@ class Game():
         pass
 
 
-    def Attack(self, player, country):
-        pass
+    def Attack(self, country_from, country_to, dices_a, dices_d):
+        '''
+        A player attacks a country and eventually conquers it.
+        :param country_from:
+        The country where the attack is coming from.
+        :param country_to:
+        The attacked country.
+        :param dices_a:
+        The dices of the attacker. An iterable (list or tuple) with a set of integers.
+        :param dices_d:
+        The dices from the defender. An iterable (list or tuple) with a set of integers.
+        :return:
+        '''
+
+        losses_defender = 0
+        losses_attacker = 0
+
+        # Game rule check, cannot attack if having only one army
+        if country_from.armies == 1:
+            raise Exception('Cannot attack when having only one army.')
+
+        # Determine how many armies are fighting, determined by minimum number
+        fighting_armies = min(len(dices_a), len(dices_d))
+
+        # We need to know how many troops the attacker sent to battle, as the
+        # remaining will move to the target country if the enemy was destroyed
+        number_attacking_troops = len(dices_a)
+
+        # Sort dices high to low
+        dices_a.sort(Reverse=True)
+        dices_d.sort(Reverse=True)
+
+        # We take the first/best X dices and compare them to estimate losses
+        for x in range(fighting_armies):
+            # Defender wins on tied dices
+            if dices_a[x] > dices_d[x]:
+                losses_defender += 1
+            else:
+                losses_attacker += 1
+
+        country_from.armies -= losses_attacker
+        country_to.armies -= losses_defender
+
+        # If the target country lost all the armies in this battle then
+        # the attacker gets it and moves the remaining troops of the movilized ones
+        if country_to.armies == 0:
+            country_to.player = country_from.player
+            remaining_attacking_troops = number_attacking_troops - losses_attacker
+            country_from.armies -= remaining_attacking_troops
+            country_to.armies += remaining_attacking_troops
 
 
     def DealInitialCountriesEqually(self):
