@@ -28,7 +28,7 @@ class Player():
 
 
     def __str__(self):
-        return f"Player {self.name} ({self.color})"
+        return f"{self.name} ({self.color})"
 
 
 class Country():
@@ -48,19 +48,19 @@ class Country():
 
         and_text = 'and'
 
-        text = f'Country of {self.name}, {self.armies} armies'
+        text = f'{self.name} - {self.armies}'
 
         if self.player != None:
-            text += f", belonging to player {self.player.name}"
+            text += f"- {self.player.name}"
 
         if len(self.neighbours) > 0:
             # Some consideration to punctuation while enumerating
             if len(self.neighbours) == 1:
-                text += f', with neighbour country {self.neighbours[0].name}'
+                text += f'- with neighbour {self.neighbours[0].name}'
             elif len(self.neighbours) == 2:
-                text += f', with neighbour countries {self.neighbours[0].name} and {self.neighbours[1].name}'
+                text += f', with neighbours {self.neighbours[0].name} and {self.neighbours[1].name}'
             else:
-                text += f', with neigbour countries '
+                text += f', with neighbours '
                 for c in self.neighbours:
                     text += f'{c.name}, '
 
@@ -399,7 +399,7 @@ class Game():
         An integer with the number of troops to be added.
         :return:
         '''
-        if self.countries == None or len(self.countries):
+        if self.countries == None or len(self.countries) == 0:
             raise Exception('Cannot use if countries has not been initialized.')
 
         for c in self.countries:
