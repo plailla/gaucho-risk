@@ -48,7 +48,7 @@ class Country():
 
         and_text = 'and'
 
-        text = f'Country of {self.name}'
+        text = f'Country of {self.name}, {self.armies} armies'
 
         if self.player != None:
             text += f", belonging to player {self.player.name}"
