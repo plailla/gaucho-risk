@@ -218,6 +218,41 @@ def demo_deal_rest_countries_dice(game):
             ### What happens if two people get the same? or three?
 
 
+def attack_round(player):
+    pass
+
+
+def movement_round(player):
+    pass
+
+
+def deployment_round(player):
+    pass
+
+
+def check_if_winner(game):
+    winner_player = game.CheckIfWinner()
+    if winner_player:
+        show_winner_banner(winner_player)
+        return True
+    else:
+        return False
+
+
+def show_winner_banner(player):
+    print('\n####################################################')
+    print(f'\nPLAYER {player} WINS!')
+    print('####################################################\n')
+
+
+def keep_playing():
+    choice = input('Do you want to keep playing? [Y/n] ')
+    if choice.lower() == 'n':
+        return False
+    else:
+        return True
+
+
 def play():
     '''
     Main orchestration function. Call this to play.
@@ -226,7 +261,15 @@ def play():
     :return:
     Nothing
     '''
+
+    # Initialize a game object
     game = risk.Game()
+
+    # Flag to interrupt the game if desired
+    keep_playing = True
+
+    # We'll use winner as an identifier to finish the game
+    winner = None
 
     # We shuffle colors once before playing, then they get assigned to players in create_players()
     random.shuffle(colors)
@@ -270,6 +313,40 @@ def play():
         print(f' - {p}')
 
     press_any_key()
+
+    while keep_playing:
+
+        print('\nAttack and relocation round\n')
+        for p in game.players:
+
+            print(f'{p.name} plays!\n\nAttack round\n')
+            attack_round(p)
+
+            if check_if_winner(game):
+                break
+
+            if not keep_playing():
+                break
+
+            print(f'\n{p.name} has finished attacking.\n\nRelocation round\n')
+            movement_round(p)
+            print(f'\n{p.name} has finished relocating troops.')
+
+            if check_if_winner():
+                break
+
+            if not keep_playing():
+                break
+
+        print('\nDeployment round\n')
+        for p in game.players:
+
+            print(f'{p.name} plays!\n\nTroop deployment round\n')
+            deployment_round(p)
+            print(f'\n{p.name} has finished deploying troops.')
+
+            if not keep_playing():
+                break
 
 
 # Press the green button in the gutter to run the script.
