@@ -251,13 +251,13 @@ def play():
     demo_deal_rest_countries_dice(game)
 
     game.AddTroopsTooAllCountries(1)
-    for n in (5, 3):
+    for n in (2, 1):
         for p in game.players:
-            print(f'{p} adding now {n} armies.')
+            #print(f'{p} adding now {n} armies.')
             for x in range(n):
                 p_cs = game.GetCountries(p)
                 c = p_cs[random.randint(0, len(p_cs) - 1)]
-                print(f'Adding randomly one army to: {c}')
+                #print(f'Adding randomly one army to: {c}')
                 c.armies += 1
 
     print('\nInitial status of board\n')
@@ -270,6 +270,7 @@ def play():
         print(f' - {p}')
 
     press_any_key()
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
