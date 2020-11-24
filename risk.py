@@ -340,8 +340,8 @@ class Game():
         number_attacking_troops = len(dices_a)
 
         # Sort dices high to low
-        dices_a.sort(Reverse=True)
-        dices_d.sort(Reverse=True)
+        dices_a.sort(reverse=True)
+        dices_d.sort(reverse=True)
 
         # We take the first/best X dices and compare them to estimate losses
         for x in range(fighting_armies):
