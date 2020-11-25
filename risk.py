@@ -196,8 +196,8 @@ class Battle():
 
     def __str__(self):
         text = (f'{self.attacking_country.name} ({self.attacking_country.player.name})'
-                f'attacks with {self.attacker_troops_no} armies {self.defending_country.name}'
-                f' ({self.defending_country.armies}, {self.defending_player.name})')
+                f' attacks with {self.attacker_troops_no} armies {self.defending_country.name}'
+                f' ({self.defending_player.name}, {self.defending_country.armies} armies)')
 
         if self.is_decided:
             text += (f'; attacker lost {self.casualties_attacker}, dices {self.dices_attacker}'
