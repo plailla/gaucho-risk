@@ -173,6 +173,12 @@ class Battle():
         self.defending_player = self.defending_country.player
         self.defender_troops_no = self.defending_country.armies
 
+        # Some game logic check
+        if self.attacking_country == self.defending_country:
+            raise Exception("A country cannot attack itself (in this game, at least).")
+        if self.attacking_player == self.defending_player:
+            raise Exception("A player cannot attack her/himself (in this game, at least).")
+
         # Whether the battle already took place
         self.is_decided = False
 
