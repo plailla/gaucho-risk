@@ -282,14 +282,15 @@ class Game():
     It offers methods with the usual actions of a game.
     '''
 
-    # Players of this game
-    players = None
+    def __init__(self):
+        # Players of this game
+        players = None
 
-    # All countries in game
-    countries = None
+        # All countries in game
+        countries = None
 
-    # Represent the deck with country cards
-    countries_deck = None
+        # Represent the deck with country cards
+        countries_deck = None
 
 
     def InitialSetupReady(self):
