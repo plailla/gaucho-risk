@@ -48,10 +48,12 @@ class Country():
 
         and_text = 'and'
 
-        text = f'{self.name} - {self.armies}'
+        text = f'{self.name}'
 
         if self.player != None:
-            text += f" - {self.player.name}"
+            text += f" ({self.player.name}, {self.armies})"
+        else:
+            text += f" ({self.armies})"
 
         if len(self.neighbours) > 0:
             # # Some consideration to punctuation while enumerating
