@@ -201,7 +201,7 @@ class Battle():
 
         if self.is_decided:
             text += (f'; attacker lost {self.casualties_attacker}, dices {self.dices_attacker}'
-                    f'; defender lost {self.casualties_attacker}, dices {self.dices_defender}')
+                    f'; defender lost {self.casualties_defender}, dices {self.dices_defender}')
 
         if self.defender_lost_country:
             text += ', attacker conquered country'
@@ -275,6 +275,8 @@ class Battle():
                                 ' (but nothing is impossible in the wonderful world of IT)')
             elif self.defending_country.armies > 0:
                 self.defender_lost_country = False
+
+            self.is_decided = True
 
         else:
             raise Exception('You cannot decide a battle without throwing dices on both sides.'
