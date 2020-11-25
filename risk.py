@@ -201,7 +201,7 @@ class Battle():
 
         if self.is_decided:
             text += (f'; attacker lost {self.casualties_attacker}, dices {self.dices_attacker}'
-                    f'; defender lost {self.casualties_attacker}}, dices {self.dices_defender}')
+                    f'; defender lost {self.casualties_attacker}, dices {self.dices_defender}')
 
         if self.defender_lost_country:
             text += ', attacker conquered country'
