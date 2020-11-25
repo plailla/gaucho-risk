@@ -292,6 +292,9 @@ class Game():
         # Represent the deck with country cards
         countries_deck = None
 
+        # Keep track of battles in game
+        battles = None
+
 
     def InitialSetupReady(self):
         if self.players == None or len(self.players) < 2:
@@ -426,6 +429,12 @@ class Game():
 
     def ShowPlayerObjective(self, player_name):
         pass
+
+
+    def CallAttack(self, country_from, country_to, troops_no):
+
+        b = Battle(country_from, country_to, troops_no)
+        return b
 
 
     def Attack(self, country_from, country_to, dices_a, dices_d):
