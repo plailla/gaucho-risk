@@ -159,6 +159,122 @@ class ConquestObjetive(Objective):
         return False
 
 
+class Battle():
+
+
+    def __init__(self, attacking_country, defending_country, attacker_troops_no):
+        # Parameters required at creation
+        self.attacking_country = attacking_country
+        self.defending_country = defending_country
+        self.attacker_troops_no = attacker_troops_no
+
+        # Parameters we want to know and that may change in the future
+        self.attacking_player = self.attacking_country.player
+        self.defending_player = self.defending_country.player
+        self.defender_troops_no = self.defending_country.armies
+
+        # Whether the battle already took place
+        self.is_decided = False
+
+        # Attributes related to results of the battle
+        self.dices_attacker = None
+        self.dices_defender = None
+        self.casualties_attacker = 0
+        self.casualties_defender = 0
+        self.defender_lost_country = False
+
+        # Time
+        self.time_created = None
+        self.time_fought = None
+
+
+    def __str__(self):
+        text = (f'{self.attacking_country.name} ({self.attacking_country.player.name})'
+                f'attacks with {self.attacker_troops_no} armies {self.defending_country.name}'
+                f' ({self.defending_country.armies}, {self.defending_player.name})')
+
+        if self.is_decided:
+            text += (f'; attacker lost {self.casualties_attacker}, dices {self.dices_attacker}'
+                    f'; defender lost {self.casualties_attacker}}, dices {self.dices_defender}')
+
+        if self.defender_lost_country:
+            text += ', attacker conquered country'
+
+        return text
+
+
+    def RollDicesAttacker(self):
+        self.dices_attacker = []
+        for x in range(self.attacker_troops_no):
+            self.dices_attacker.append(random.randint(1,6))
+        return self.dices_attacker
+
+
+    def RollDicesDefender(self):
+        self.dices_defender = []
+        for x in range(self.defender_troops_no):
+            self.dices_defender.append(random.randint(1,6))
+        return self.dices_defender
+
+
+    def Calculate(self):
+        if self.dices_defender and self.dices_attacker:
+            # Should we also check if it's been calculated already?
+            losses_defender = 0
+            losses_attacker = 0
+
+            self.casualties_defender = 0
+            self.casualties_attacker = 0
+
+            # Game rule check, cannot attack if having only one army
+            if self.attacking_country.armies == 1:
+                raise Exception('Cannot attack when having only one army.')
+
+            # Determine how many armies are fighting, determined by minimum amount
+            # of both sets of dices
+            fighting_armies = min(len(self.dices_attacker), len(self.dices_defender))
+
+            # Sort dices high to low
+            self.dices_attacker.sort(reverse=True)
+            self.dices_defender.sort(reverse=True)
+
+            # We take the first/best X dices and compare them to estimate losses
+            for x in range(fighting_armies):
+                # Defender wins on tied dices
+                if self.dices_attacker[x] > self.dices_defender[x]:
+                    self.casualties_defender += 1
+                else:
+                    self.casualties_attacker += 1
+
+            self.attacking_country.armies -= self.casualties_attacker
+            self.defending_country.armies -= self.casualties_defender
+
+            # If the target country lost all the armies in this battle then
+            # the attacker gets it and moves the remaining troops of the movilized ones
+            if self.defending_country.armies == 0:
+                # Make the move process
+
+                # Change the player on target country
+                self.defending_country.player = self.attacking_country.player
+
+                # Estimate and move the troops from attacking country to newly conquered
+                remaining_attacking_troops = self.attacker_troops_no - self.casualties_attacker
+                self.attacking_country.armies -= remaining_attacking_troops
+                self.defending_country.armies += remaining_attacking_troops
+
+                # Update the indicator
+                self.defender_lost_country = True
+            elif self.defending_country.armies < 0:
+                raise Exception('Defending armies went below zero, which is impossible in the game'
+                                ' (but nothing is impossible in the wonderful world of IT)')
+            elif self.defending_country.armies > 0:
+                self.defender_lost_country = False
+
+        else:
+            raise Exception('You cannot decide a battle without throwing dices on both sides.'
+                            'Call both RollDices...() functions first.')
+
+
 class Game():
     '''
     The Game class acts as an interface, to minimize the need of knowing
