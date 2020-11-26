@@ -164,17 +164,28 @@ class ConquestObjetive(Objective):
 
 class Battle():
 
-
     def __init__(self, attacking_country, defending_country, attacker_troops_no):
+
+        max_troops = 3
+
         # Parameters required at creation
         self.attacking_country = attacking_country
         self.defending_country = defending_country
-        self.attacker_troops_no = attacker_troops_no
+
+        if attacker_troops_no <= max_troops:
+            self.attacker_troops_no = attacker_troops_no
+        else:
+            self.attacker_troops_no = max_troops
 
         # Parameters we want to know and that may change in the future
         self.attacking_player = self.attacking_country.player
         self.defending_player = self.defending_country.player
-        self.defender_troops_no = self.defending_country.armies
+
+        if self.defending_country.armies <= max_troops:
+            self.defender_troops_no = self.defending_country.armies
+        else:
+            # We cannot defend with more than three.
+            self.defender_troops_no = max_troops
 
         # Some game logic check
         if self.attacking_country == self.defending_country:
