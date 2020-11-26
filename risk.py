@@ -1,4 +1,5 @@
 import random
+import math
 
 
 class Player():
@@ -305,6 +306,9 @@ class Game():
         # Keep track of battles in game
         battles = None
 
+        # Player gets a number of armies no matter how few countries she/he has
+        min_armies_per_turn = 3
+
 
     def InitialSetupReady(self):
         if self.players == None or len(self.players) < 2:
@@ -386,7 +390,7 @@ class Game():
         self.players = players
 
 
-    def GetCountries(self, a_player):
+    def GetCountries(self, a_player, only_countries_with_more_than_one=False):
         '''
         Returns a list with countries owned by a player.
 
@@ -399,7 +403,11 @@ class Game():
         for c in self.countries:
             #print(f'c.player=[{c.player}]; a_player=[{a_player}]')
             if c.player == a_player:
-                countries_from_this_player.append(c)
+                if only_countries_with_more_than_one:
+                    if c.armies > 1:
+                        countries_from_this_player.append(c)
+                else:
+                    countries_from_this_player.append(c)
 
         return countries_from_this_player
 
@@ -579,3 +587,10 @@ class Game():
             raise Exception('Cannot do this if countries have not been loaded yet.')
         else:
             self.world_objective = WorldDominationObjective(round(percent_to_conquer * len(self.countries)))
+
+
+    def GetAmountArmiesPerTurn(self, player):
+        armies = int(math.ceil(len(self.GetCountries(player)) / 2))
+        if armies < 3:
+            armies = self.min_armies_per_turn
+        return armies
