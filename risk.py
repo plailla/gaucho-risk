@@ -229,8 +229,6 @@ class Battle():
     def Calculate(self):
         if self.dices_defender and self.dices_attacker:
             # Should we also check if it's been calculated already?
-            losses_defender = 0
-            losses_attacker = 0
 
             self.casualties_defender = 0
             self.casualties_attacker = 0
