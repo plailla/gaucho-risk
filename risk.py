@@ -32,6 +32,10 @@ class Player():
         return f"{self.name} ({self.color})"
 
 
+    def AddObjective(self, objective):
+        self.objectives.append(objective)
+
+
 class Country():
     def __init__(self, name, id):
         self.name = name
@@ -102,7 +106,7 @@ class Objective():
         pass
 
 
-    def IsAchieved(self):
+    def IsAchieved(self, player):
         raise NotImplementedError('Subclass must implement this method.')
 
 
@@ -111,12 +115,21 @@ class WorldDominationObjective(Objective):
     Class for the generic objective for everyone of conquering a number of countries.
     '''
 
-    def __init__(self,amount_countries):
+    def __init__(self,amount_countries, all_countries):
         self.amount_countries = amount_countries
+        self.all_countries = all_countries
 
 
-    def IsAchieved(self, player):
-        if len(self.player.GetCountries()) >= self.amount_countries:
+    def __str__(self):
+        return('World domination - Conquer a total of {} countries'.format(self.amount_countries))
+
+
+    def IsAchieved(self, pl):
+        p_countries = []
+        for c in self.all_countries:
+            if c.player == pl:
+                p_countries.append(c)
+        if len(p_countries) >= self.amount_countries:
             return True
         else:
             return False
@@ -136,7 +149,7 @@ class AnihilationObjetive():
         self.player = player
 
 
-    def IsAchieved(self):
+    def IsAchieved(self, player):
         if len(self.player.GetCountries()) == 0:
             return True
         else:
@@ -304,19 +317,21 @@ class Game():
 
     def __init__(self):
         # Players of this game
-        players = None
+        self.players = None
 
         # All countries in game
-        countries = None
+        self.countries = None
 
         # Represent the deck with country cards
-        countries_deck = None
+        self.countries_deck = None
 
         # Keep track of battles in game
-        battles = None
+        self.battles = None
 
         # Player gets a number of armies no matter how few countries she/he has
-        min_armies_per_turn = 3
+        self.min_armies_per_turn = 3
+
+        self.world_objective = None
 
 
     def InitialSetupReady(self):
@@ -576,7 +591,8 @@ class Game():
         '''
         for p in self.players:
             for objective in p.objectives:
-                if objective.IsAchieved():
+                #print(objective)
+                if objective.IsAchieved(p):
                     return p
 
         return None
@@ -594,8 +610,12 @@ class Game():
         '''
         if self.countries == None or len(self.countries) == 0:
             raise Exception('Cannot do this if countries have not been loaded yet.')
+        elif self.players == None or len(self.players) == 0:
+            raise Exception('Cannot do this if players have not been loaded yet.')
         else:
-            self.world_objective = WorldDominationObjective(round(percent_to_conquer * len(self.countries)))
+            self.world_objective = WorldDominationObjective(round(percent_to_conquer * len(self.countries)), self.countries)
+            for p in self.players:
+                p.AddObjective(self.world_objective)
 
 
     def GetAmountArmiesPerTurn(self, player):
