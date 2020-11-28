@@ -576,6 +576,7 @@ class Game():
     def CallAttack(self, country_from, country_to, troops_no):
 
         b = Battle(country_from, country_to, troops_no)
+        self.battles.append(b)
         return b
 
 
