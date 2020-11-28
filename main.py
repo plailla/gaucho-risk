@@ -278,6 +278,11 @@ def attack_round(player, game):
                     attacked_c = enemy_countries[attacked_country_no]
 
                     max_attack_troops = attacker_c.armies - 1
+
+                    # You cannot attack with more than three armies no matter how many the country has.
+                    if max_attack_troops > 3:
+                        max_attack_troops = 3
+
                     if max_attack_troops == 1:
                         print('Only one army available to attack.')
                         troops_no = 1
