@@ -222,6 +222,8 @@ def demo_deal_rest_countries_dice(game):
         c.SetPlayer(winner)
         ### What happens if two people get the same? or three?
 
+    for p in game.players:
+        game.UpdatePlayerCountries(p)
 
 def show_player_countries(player, game):
     print(f'Countries from {player}:')
@@ -308,6 +310,10 @@ def attack_round(player, game):
                         print(f'{attacked_c.player.name} got dices {battle.dices_defender}')
 
                     battle.Calculate()
+
+                    if battle.defender_lost_country:
+                        game.UpdatePlayerCountries(battle.defending_player)
+                        game.UpdatePlayerCountries(battle.attacking_player)
 
                     print(f"\nBattle results:\n{battle}")
                     print(f'\nStatus after battle:\n - Attacker {attacker_c}\n - Defender {attacked_c}')
