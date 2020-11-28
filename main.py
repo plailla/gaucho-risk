@@ -303,7 +303,7 @@ def attack_round(player, game):
 
                     if attacker_loses_before_fighting:
                         print(f'Ones means that the attacker cannot win, defender does not need to throw dices.')
-                        battle.RollDicesAttacker() # Because the object still needs dices to calculate
+                        battle.RollDicesDefender() # Because the object still needs dices to calculate
                     else:
                         input(f'\n{attacked_c.player.name}, press any key to throw {attacked_c.armies} dices...')
                         battle.RollDicesDefender()
