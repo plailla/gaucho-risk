@@ -475,7 +475,10 @@ def play():
 
     show_banner()
 
-    game.LoadCountriesFromFile()
+    # Loading map data from files
+    print('Loading map data from files...')
+    game.LoadMapFromFile()
+
     game.InitializeCountriesDeck()
 
     # for c in game.countries:

@@ -43,6 +43,7 @@ class Country():
 
         # Needs to be loaded from file
         self.neighbours = []
+        self.continent = None
 
         # Gets assigned during the game
         self.player = None
@@ -96,6 +97,39 @@ class Country():
         #print(f'{self.name} owned by: {self.player}')
         self.player = pl
         #print(f'{self.name} now owned by: {self.player}')
+
+
+class Continent():
+    """
+    A continent, which has a list of countries and a number of armies that it grants to its conqueror.
+    """
+
+    def __init__(self, name, army_bonus):
+        # Required attributes for initialization
+        self.name = name
+        self.army_bonus = army_bonus
+
+        # Attributes set later
+        self.countries = None
+
+    def __str__(self):
+        return f"{self.name} ({len(self.countries)} countries)"
+
+    def SetCountries(self, countries):
+        self.countries = countries
+
+    def AddCountry(self, country):
+        if not self.countries:
+            self.countries = []
+        self.countries.append(country)
+
+    def ConqueredByPlayer(self, player):
+        conquered_by_player = True
+        for c in self.countries:
+            if c.player != player:
+                conquered_by_player = False
+
+        return conquered_by_player
 
 
 class Objective():
@@ -344,11 +378,15 @@ class Game():
         return True
 
 
-    def LoadCountriesFromFile(self, countries_file='countries.txt', countries_connections_file='country_connections.txt'):
+    def LoadMapFromFile(self, countries_file='countries.txt', countries_connections_file='country_connections.txt', continents_file='continents.txt'):
         '''
-        Initialises the game's list of country objects with data from files.
-        A country code is used for simplicity and storage efficiency in files,
-        while definining neighbours for instance.
+        Initialises the game's list of country and continent objects with data from files.
+        A country and continent codes are used for simplicity and storage efficiency in files,
+        while defining neighbours for instance.
+
+        :param continents_file
+        A file with one to many lines with the format "ID_CONTINENT;CONTINENT_NAME;ARMY_BONUS". E.g.
+        1;Africa;3
 
         :param coutries_file:
         A file with one line per country with a code and its description with
@@ -372,17 +410,38 @@ class Game():
         :return:
         Nothing
         '''
+
+        # The actual list of continents that will set for the game
+        continents = []
+
+        # A dictionary with the loaded continents accessible by ID
+        continents_dict = {}
+
         self.countries = []
         countries_dict = {}
+
+        with open(continents_file, 'r') as continents_fp:
+            for file_line in continents_fp.readlines():
+                continent_id, continent_name, continent_army_bonus = file_line.rstrip().split(';')
+                continent_id = int(continent_id)
+                cont = Continent(continent_name, int(continent_army_bonus))
+                continents.append(cont)
+                continents_dict[continent_id] = cont
+            continents_fp.close()
+
+        self.continents = continents
 
         # try:
         with open(countries_file, 'r') as countries_fp:
             for file_line in countries_fp.readlines():
-                country_id, country_name = file_line.rstrip().split(';')
+                country_id, country_name, continent_id = file_line.rstrip().split(';')
                 country_id = int(country_id)
+                continent_id = int(continent_id)
                 new_country = Country(country_name, country_id)
+                new_country.continent = continents_dict[continent_id]
                 self.countries.append(new_country)
                 countries_dict[country_id] = new_country
+                continents_dict[continent_id].AddCountry(new_country)
             countries_fp.close()
 
         with open(countries_connections_file, 'r') as connections_fp:
