@@ -1,10 +1,12 @@
 1;Argentina;1
-2;Bolivia;1
-3;Uruguay;1
-4;Paraguay;1
-5;Chile;1
-6;Perú;1
-7;Brasil;1
-8;Ecuador;1
-9;Venezuela;1
-10;Colombia;1
+2;Uruguay;1
+3;Chile;1
+4;Peru;1
+5;Brazil;1
+6;Colombia;1
+7;Sahara;2
+8;Egypt;2
+9;Ethiopia;2
+10;Madagascar;2
+11;Zaire;2
+12;South Africa;2
