@@ -431,7 +431,7 @@ def check_if_winner(game):
 
 def show_winner_banner(player):
     print('\n####################################################')
-    print(f'\nPLAYER {player} WINS!\n\nObjectives:')
+    print(f'\nPLAYER {player} WINS!\n\nOne of the following objectives was fulfilled:')
     for o in player.objectives:
         print(f' - {o}')
     print('\n####################################################\n')
@@ -460,6 +460,41 @@ def show_countries_and_players(game):
     for p in game.players:
         print(f' - {p}')
 
+
+def initialize_objectives(game):
+    """
+    Creates the game's objectives. These are hardcoded.
+
+    """
+    objectives = []
+
+    # We create one annihilation objective per player. In the original game there's one card
+    # per player, and if not possible (because player is not player or one is that player) then
+    # the next person in the round should be taken as objective, but it's more logical in a computer
+    # game to just make one objective for each player.
+    for pl in game.players:
+        annhil_objective = risk.AnnihilationObjetive(pl)
+        objectives.append(annhil_objective)
+
+    obj1 = risk.ConquestObjetive([game.continents[0]], None) # One continent
+    obj2 = risk.ConquestObjetive([game.continents[1]],
+                                 [(game.continents[0], 1)]) # One continent plus one country
+    obj3 = risk.ConquestObjetive(game.continents, None) # Person getting this one is doomed
+    obj4 = risk.ConquestObjetive(None,
+                                 [(game.continents[0], 3), (game.continents[1], 3)])
+
+    for o in [obj1, obj2, obj3, obj4]:
+        objectives.append(o)
+
+    objectives_deck_deal = objectives.copy()
+    random.shuffle(objectives_deck_deal)
+    for p in game.players:
+        p.AddObjective(objectives_deck_deal.pop())
+
+    for p in game.players:
+        print(f"{p.name} has following objectives:")
+        for o in p.objectives:
+            print(f" - {o}")
 
 def play():
     '''
@@ -504,6 +539,8 @@ def play():
 
     game.LoadWorldDominationObjective(0.6)
     print(f'\nWorld domination set to {game.world_objective.amount_countries}.\n')
+
+    initialize_objectives(game)
 
     game.AddTroopsTooAllCountries(1)
     for n in (2, 1):

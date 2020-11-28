@@ -169,7 +169,7 @@ class WorldDominationObjective(Objective):
             return False
 
 
-class AnihilationObjetive():
+class AnnihilationObjetive():
     '''
     Class for the objetives that require the destruction of an especific player.
     '''
@@ -181,7 +181,10 @@ class AnihilationObjetive():
         '''
         self.player = player_to_be_destroyed
 
-    def IsAchieved(self):
+    def __str__(self):
+        return f"Eliminate {self.player}"
+
+    def IsAchieved(self,player):
         if len(self.player.countries) == 0:
             return True
         else:
@@ -204,8 +207,8 @@ class ConquestObjetive(Objective):
         :param continents_and_number_countries: A list of tuples with continent and int of total number of countries
         '''
         # Check if we got enough data from the parameters
-        if ((not continents_and_number_countries) or (len(continents_and_number_countries) == 0) and
-            (not continents_to_conquer) or (len(continents_to_conquer) == 0)):
+        if ((not continents_and_number_countries) or (len(continents_and_number_countries) == 0))\
+                and  ((not continents_to_conquer) or (len(continents_to_conquer) == 0)):
             raise Exception("A conquest objective must have either a list of continents"
                             "or a list of number of countries in continents.")
         self.continents_and_number_countries = continents_and_number_countries
@@ -216,11 +219,12 @@ class ConquestObjetive(Objective):
         if self.continents_to_conquer and len(self.continents_to_conquer):
             for cont in self.continents_to_conquer:
                 text += f'the continent of {cont.name}, '
-            re.sub(r', $', '', text)
+            text = re.sub(r', $', '', text)
         if self.continents_and_number_countries and len(self.continents_and_number_countries) > 0:
+            text += " "
             for cont, num_countries in self.continents_and_number_countries:
                 text += f'{num_countries} countries of the continent of {cont.name}, '
-            re.sub(r', $', '', text)
+            text = re.sub(r', $', '', text)
         return text
 
     def IsAchieved(self, player):
@@ -689,6 +693,7 @@ class Game():
             for objective in p.objectives:
                 #print(objective)
                 if objective.IsAchieved(p):
+                    print(f'{p.name} achieved:\n{objective}')
                     return p
 
         return None
