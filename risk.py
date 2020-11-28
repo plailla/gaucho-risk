@@ -401,7 +401,7 @@ class Game():
         self.countries_deck = None
 
         # Keep track of battles in game
-        self.battles = None
+        self.battles = []
 
         # Player gets a number of armies no matter how few countries she/he has
         self.min_armies_per_turn = 3
@@ -576,6 +576,7 @@ class Game():
     def CallAttack(self, country_from, country_to, troops_no):
 
         b = Battle(country_from, country_to, troops_no)
+        self.battles.append(b)
         return b
 
 
@@ -724,3 +725,6 @@ class Game():
         if armies < 3:
             armies = self.min_armies_per_turn
         return armies
+
+    def UpdatePlayerCountries(self, player):
+        player.countries = self.GetCountries(player)
