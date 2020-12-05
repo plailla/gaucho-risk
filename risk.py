@@ -419,7 +419,11 @@ class Game():
         return True
 
 
-    def LoadMapFromFile(self, countries_file='countries.txt', countries_connections_file='country_connections.txt', continents_file='continents.txt'):
+    def LoadMapFromFile(
+            self,
+            countries_file='game_data/countries.txt',
+            countries_connections_file='game_data/country_connections.txt',
+            continents_file='game_data/continents.txt'):
         '''
         Initialises the game's list of country and continent objects with data from files.
         A country and continent codes are used for simplicity and storage efficiency in files,
