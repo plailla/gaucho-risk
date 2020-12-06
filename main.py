@@ -507,6 +507,48 @@ def initialize_objectives(game):
         for o in p.objectives:
             print(f" - {o}")
 
+    def country_card_after_attacking(game, player):
+        print(f"{player.name} has conquered at least one country, she/he receives a country card.")
+        game.GiveCountryCardToPlayer(player)
+
+    def trad_each_country_card(game, player):
+
+        finished_trading = False
+        while not finished_trading:
+
+            non_used_cards = []
+
+            print(f"Checking {player.name}'s country cards")
+
+            for card in player.cards:
+                if not card.already_traded and (card.country in player.countries):
+                    non_used_cards.append(card)
+
+            if len(non_used_cards) > 0:
+                print(f"Following cards can be traded:")
+
+                for num, c in enumerate(non_used_cards):
+                    print(f" {num} - {c}")
+
+                    card_no = helpers.prompt_int_range(
+                        f'Please choose a card to be claimed (1-{len(non_used_cards)} or 0 to skip): ',
+                        'Wrong input!',
+                        0, len(non_used_cards))
+
+                    if card_no > 0:
+                        selected_card = non_used_cards[card_no-1]
+                        print(f"Trading {selected_card}")
+                        game.TradeCardPosessedCountry(selected_card)
+                    else:
+                        finished_trading = True
+
+            else:
+                print(f"No individual cards to trade for armies.")
+                break
+
+    def trade_country_card_set(game, player):
+        pass
+
 def play():
     '''
     Main orchestration function. Call this to play.
@@ -533,6 +575,8 @@ def play():
     # Loading map data from files
     print('Loading map data from files...')
     game.LoadMapFromFile()
+
+    game.LoadCards()
 
     game.InitializeCountriesDeck()
 

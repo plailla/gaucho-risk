@@ -1,6 +1,7 @@
 import random
 import math
 import re
+import helpers
 
 class Player():
     '''
@@ -23,10 +24,12 @@ class Player():
         self.color = color
 
         # These get filled by methods after the game starts
+        self.times_country_cards_traded = 0
         self.objectives = []
         self.countries = []
+        self.cards = None
         self.world_objective = None
-
+        #self.cards_deck = None
 
     def __str__(self):
         return f"{self.name} ({self.color})"
@@ -382,6 +385,24 @@ class Battle():
             raise Exception('You cannot decide a battle without throwing dices on both sides.'
                             'Call both RollDices...() functions first.')
 
+class CountryCard():
+
+    def __init__(self, country, figure, already_traded=False):
+        self.country = country
+        self.already_traded = already_traded
+        self.figure = figure
+
+    def __str__(self):
+        text = f"{self.country.name} ({self.figure})"
+        if self.already_traded:
+            text += " (already traded)"
+        return text
+
+    def Trade(self):
+        if not self.already_traded:
+            self.already_traded = True
+        else:
+            raise Exception("The country card {self} has already been marked as traded.")
 
 class Game():
     '''
@@ -396,9 +417,11 @@ class Game():
 
         # All countries in game
         self.countries = None
+        self.countries_by_id = None
 
         # Represent the deck with country cards
-        self.countries_deck = None
+        self.country_card_deck = None
+        self.country_cards = None
 
         # Keep track of battles in game
         self.battles = []
@@ -500,6 +523,30 @@ class Game():
                 countries_dict[country_id].add_neighbour(countries_dict[neighbour_id])
             connections_fp.close()
 
+        self.countries_by_id = countries_dict
+
+    def LoadCards(self,cards_file="game_data/card_figures.txt",country_figures_file="game_data/countries_figures.txt"):
+        new_cards_deck = []
+
+        figures = {}
+
+        try:
+            for file_line in helpers.read_game_data_from_file(cards_file):
+                card_number, card_figure = file_line.split(';')
+                figures[int(card_number)] = card_figure
+
+            for file_line in helpers.read_game_data_from_file(country_figures_file):
+                country_number, card_number = file_line.split(';')
+                country_number = int(country_number)
+                card_number = int(card_number)
+                country = self.countries_by_id[country_number]
+                card = CountryCard(country, figures[card_number])
+                new_cards_deck.append(card)
+
+            self.country_cards = new_cards_deck
+
+        except:
+            raise Exception('There was a problem while reading the country card data.')
 
     def AssignPlayers(self, names_and_colors):
         '''
@@ -554,12 +601,11 @@ class Game():
 
         :return:
         '''
-        if self.countries != None:
-            self.countries_deck = []
-            for c in self.countries:
-                self.countries_deck.append(c)
-            random.shuffle(self.countries_deck)
+        if self.country_cards and len(self.country_cards) > 0:
+            self.country_card_deck = self.country_cards.copy()
+            random.shuffle(self.country_card_deck)
 
+        #print('Initialized and shuffled country cards deck.')
 
     def ShowBoardForPlayer(self, player_number):
         '''
@@ -730,3 +776,38 @@ class Game():
 
     def UpdatePlayerCountries(self, player):
         player.countries = self.GetCountries(player)
+
+    def TradeCardPosessedCountry(self, card):
+        num_armies = 2
+        card.already_traded = True
+        return num_armies
+
+    def TradeCardsFiguresSet(self, player, cards):
+
+        num_required_cards = 3
+
+        if len(cards) == num_required_cards:
+
+            if player.times_country_cards_traded == 0:
+                num_armies_for_player = 4
+            elif player.times_country_cards_traded == 1:
+                num_armies_for_player = 7
+            elif player.times_country_cards_traded >= 2:
+                num_armies_for_player = 10
+            else:
+                raise Exception(f'Player {player.name} traded cards {player.times_country_cards_traded} times?')
+
+            for card in cards:
+                player.cards.pop(card)
+                card.already_traded = False
+                self.country_card_deck.add(card)
+
+            return num_armies_for_player
+
+        else:
+            raise Exception(f'To trade in cards you need {num_required_cards} cards.')
+
+    def GiveCountryCardToPlayer(self, player):
+        a_card = self.country_card_deck.pop()
+        a_card.already_traded = False
+        player.cards.add(a_card)

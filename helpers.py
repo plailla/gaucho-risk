@@ -1,5 +1,5 @@
 import os
-
+import re
 
 def press_any_key():
     input('\nPress any key to continue...\n')
@@ -52,3 +52,14 @@ def prompt_int_range(prompt_text, error_text, min_int, max_int):
         except ValueError:
             print(error_text)
     return my_int
+
+def read_game_data_from_file(file):
+    try:
+        file_lines = []
+        with open(file, 'r') as game_data_file:
+            for file_line in game_data_file.readlines():
+                if not re.match(r'^#', file_line):
+                    file_lines.append(file_line.rstrip())
+        return file_lines
+    except Exception:
+        print('Problem reading {file}')
