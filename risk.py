@@ -29,7 +29,7 @@ class Player():
         self.countries = []
         self.cards = None
         self.world_objective = None
-        self.cards_deck = None
+        #self.cards_deck = None
 
     def __str__(self):
         return f"{self.name} ({self.color})"
@@ -806,3 +806,8 @@ class Game():
 
         else:
             raise Exception(f'To trade in cards you need {num_required_cards} cards.')
+
+    def GiveCountryCardToPlayer(self, player):
+        a_card = self.country_card_deck.pop()
+        a_card.already_traded = False
+        player.cards.add(a_card)
