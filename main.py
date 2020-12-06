@@ -534,6 +534,8 @@ def play():
     print('Loading map data from files...')
     game.LoadMapFromFile()
 
+    game.LoadCards()
+
     game.InitializeCountriesDeck()
 
     # for c in game.countries:
