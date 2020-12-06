@@ -431,6 +431,9 @@ class Game():
 
         self.world_objective = None
 
+        # More new status variables
+        self.current_player = None
+        self.player_conquered_territory = False
 
     def InitialSetupReady(self):
         if self.players == None or len(self.players) < 2:
@@ -811,3 +814,17 @@ class Game():
         a_card = self.country_card_deck.pop()
         a_card.already_traded = False
         player.cards.add(a_card)
+
+    def AdvanceNextPlayer(self):
+        if self.InitialSetupReady():
+            if self.current_player:
+                # Iterate through the list of players and get the next one,
+                # if we are at the last one then return the first one
+                idx_player = self.players.index(self.current_player)
+                if idx_player == len(self.players) - 1: # at the last item
+                    self.current_player = self.players[0]
+                else:
+                    self.current_player = self.players[idx_player + 1]
+            else:
+                # If current player has not been set yet then just assign the first one
+                self.current_player = self.players[0]
