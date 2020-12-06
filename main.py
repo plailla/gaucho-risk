@@ -242,6 +242,9 @@ def show_player_countries_which_can_attack(player, game):
 
 
 def attack_round(player, game):
+
+    print(f'Current player: {game.current_player}')
+
     finished_attacking = False
     while not finished_attacking:
         show_player_countries_which_can_attack(player, game)
@@ -337,9 +340,10 @@ def attack_round(player, game):
 
             helpers.press_any_key()
 
-
 def movement_round(player, game):
     print(f'\nMovement round from {player.name}\n')
+
+    print(f'Current player: {game.current_player}')
 
     countries_relocate = game.GetCountries(player, True)
 
@@ -408,10 +412,14 @@ def movement_round(player, game):
             print(f'Player has no countries with more than one troop that could relocate.')
             done_moving = True
 
+    game.AdvanceNextPlayer()
 
 def deployment_round(player, game):
 
     print(f"\n{player.name}'s deployment of new armies\n")
+
+    print(f'Current player: {game.current_player}')
+
     armies_no = game.GetAmountArmiesPerTurn(player)
     p_countries = game.GetCountries(player)
     p_countries_no = len(p_countries)
@@ -430,6 +438,7 @@ def deployment_round(player, game):
     print(f'{player.name} has placed all available armies on the map.')
     show_player_countries(player, game)
 
+    game.AdvanceNextPlayer()
 
 def check_if_winner(game):
     winner_player = game.CheckIfWinner()
@@ -596,6 +605,8 @@ def play():
     print(f'\nWorld domination set to {game.world_objective.amount_countries}.\n')
 
     initialize_objectives(game)
+
+    game.AdvanceNextPlayer()
 
     game.AddTroopsTooAllCountries(1)
     for n in (2, 1):
