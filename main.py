@@ -225,6 +225,7 @@ def demo_deal_rest_countries_dice(game):
     for p in game.players:
         game.UpdatePlayerCountries(p)
 
+
 def show_player_countries(player, game):
     print(f'Countries from {player}:')
     x = 0
@@ -340,6 +341,7 @@ def attack_round(player, game):
 
             helpers.press_any_key()
 
+
 def movement_round(player, game):
     print(f'\nMovement round from {player.name}\n')
 
@@ -414,6 +416,7 @@ def movement_round(player, game):
 
     game.AdvanceNextPlayer()
 
+
 def deployment_round(player, game):
 
     print(f"\n{player.name}'s deployment of new armies\n")
@@ -439,6 +442,7 @@ def deployment_round(player, game):
     show_player_countries(player, game)
 
     game.AdvanceNextPlayer()
+
 
 def check_if_winner(game):
     winner_player = game.CheckIfWinner()
@@ -466,11 +470,11 @@ def ask_keep_playing():
 
 
 def show_countries_and_players(game):
-    '''
+    """
     Shows countries and players lists.
     :return:
     Nothing.
-    '''
+    """
     print('\nCurrent status of board\n')
     print('Countries:')
     for c in game.countries:
@@ -558,14 +562,15 @@ def initialize_objectives(game):
     def trade_country_card_set(game, player):
         pass
 
+
 def play():
-    '''
+    """
     Main orchestration function. Call this to play.
     ´Will call for the user interaction functions.
 
     :return:
     Nothing
-    '''
+    """
 
     # Initialize a game object
     game = risk.Game()
