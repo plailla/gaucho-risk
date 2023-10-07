@@ -638,11 +638,9 @@ def play():
                 if check_if_winner(game):
                     keep_playing = False
                     break
-
                 if not ask_keep_playing():
                     keep_playing = False
                     break
-
             else:
                 break
 
@@ -650,15 +648,12 @@ def play():
                 print(f'\n{p.name} has finished attacking.\n\nRELOCATION ROUND\n')
                 movement_round(p, game)
                 print(f'\n{p.name} has finished relocating troops.')
-
                 if check_if_winner(game):
                     keep_playing = False
                     break
-
                 if not ask_keep_playing():
                     keep_playing = False
                     break
-
             else:
                 break
 
