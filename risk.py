@@ -91,10 +91,8 @@ class Country():
 
         return text
 
-
     def add_neighbour(self,country):
         self.neighbours.append(country)
-
 
     def SetPlayer(self,pl):
         #print(f'{self.name} owned by: {self.player}')
@@ -828,3 +826,17 @@ class Game():
             else:
                 # If current player has not been set yet then just assign the first one
                 self.current_player = self.players[0]
+
+
+class Army:
+    """
+    Represent a single army. Stores current and previous country.
+    """
+
+    def __init__(self, player, current_country, previous_country=None):
+        self.previous_country = previous_country
+        self.current_country = current_country
+        self.player = player
+
+    def __str__(self):
+        return f"Army from {self.player.name} in {self.current_country}"
