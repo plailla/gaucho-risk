@@ -169,14 +169,14 @@ class WorldDominationObjective(Objective):
 
 class AnnihilationObjetive:
     """
-    Class for the objetives that require the destruction of an especific player.
+    Class for the objectives that require the destruction of a specific player.
     """
     def __init__(self, player_to_be_destroyed):
-        '''
+        """
         Objective to destroy a player.
-        :param player:
+        :param player_to_be_destroyed:
         The player who needs to be destroyed
-        '''
+        """
         self.player = player_to_be_destroyed
 
     def __str__(self):
@@ -198,12 +198,12 @@ class ConquestObjetive(Objective):
      - A number of countries from a continent
     """
     def __init__(self, continents_to_conquer=None, continents_and_number_countries=None):
-        '''
+        """
         Creates a new conquest objective.
 
         :param continents_to_conquer: A list of continents to be conquered
         :param continents_and_number_countries: A list of tuples with continent and int of total number of countries
-        '''
+        """
         # Check if we got enough data from the parameters
         if ((not continents_and_number_countries) or (len(continents_and_number_countries) == 0))\
                 and  ((not continents_to_conquer) or (len(continents_to_conquer) == 0)):
