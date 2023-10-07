@@ -3,14 +3,15 @@ import math
 import re
 import helpers
 
-class Player():
-    '''
+
+class Player:
+    """
     Represent one of the game's players.
 
-    '''
+    """
 
     def __init__(self, name, color):
-        '''
+        """
         Creates a new object of the class.
 
         :param name:
@@ -19,7 +20,7 @@ class Player():
         :param color:
         A color for the player. Can be pretty much anything (string, codes, etc.),
         it's there in case it's used somehow for displaying the information.
-        '''
+        """
         self.name = name
         self.color = color
 
@@ -34,12 +35,11 @@ class Player():
     def __str__(self):
         return f"{self.name} ({self.color})"
 
-
     def AddObjective(self, objective):
         self.objectives.append(objective)
 
 
-class Country():
+class Country:
     def __init__(self, name, id):
         self.name = name
         self.id = id
@@ -51,7 +51,6 @@ class Country():
         # Gets assigned during the game
         self.player = None
         self.armies = 0
-
 
     def __str__(self):
 
@@ -100,7 +99,7 @@ class Country():
         #print(f'{self.name} now owned by: {self.player}')
 
 
-class Continent():
+class Continent:
     """
     A continent, which has a list of countries and a number of armies that it grants to its conqueror.
     """
@@ -133,10 +132,10 @@ class Continent():
         return conquered_by_player
 
 
-class Objective():
-    '''
+class Objective:
+    """
     Objective class to serve as the base for all types of objectives.
-    '''
+    """
     def __init__(self):
         pass
 
@@ -146,18 +145,16 @@ class Objective():
 
 
 class WorldDominationObjective(Objective):
-    '''
+    """
     Class for the generic objective for everyone of conquering a number of countries.
-    '''
+    """
 
     def __init__(self,amount_countries, all_countries):
         self.amount_countries = amount_countries
         self.all_countries = all_countries
 
-
     def __str__(self):
         return('World domination - Conquer a total of {} countries'.format(self.amount_countries))
-
 
     def IsAchieved(self, pl):
         p_countries = []
@@ -170,10 +167,10 @@ class WorldDominationObjective(Objective):
             return False
 
 
-class AnnihilationObjetive():
-    '''
+class AnnihilationObjetive:
+    """
     Class for the objetives that require the destruction of an especific player.
-    '''
+    """
     def __init__(self, player_to_be_destroyed):
         '''
         Objective to destroy a player.
@@ -229,12 +226,12 @@ class ConquestObjetive(Objective):
         return text
 
     def IsAchieved(self, player):
-        '''
+        """
 
         :param player:
         The player who should be evaluated.
         :return:
-        '''
+        """
         # We'll start from 'accomplished' and set it to false the first time we see something not fulfilled.
         achieved = True
         if self.continents_to_conquer != None and len(self.continents_to_conquer) > 0:
@@ -251,7 +248,8 @@ class ConquestObjetive(Objective):
                     if conquered_countries < num_required_countries:
                         achieved = False
 
-class Battle():
+
+class Battle:
 
     def __init__(self, attacking_country, defending_country, attacker_troops_no):
 
@@ -296,7 +294,6 @@ class Battle():
         self.time_created = None
         self.time_fought = None
 
-
     def __str__(self):
         text = (f'{self.attacking_country.name} ({self.attacking_country.player.name})'
                 f' attacks with {self.attacker_troops_no} armies {self.defending_country.name}'
@@ -311,20 +308,17 @@ class Battle():
 
         return text
 
-
     def RollDicesAttacker(self):
         self.dices_attacker = []
         for x in range(self.attacker_troops_no):
             self.dices_attacker.append(random.randint(1,6))
         return self.dices_attacker
 
-
     def RollDicesDefender(self):
         self.dices_defender = []
         for x in range(self.defender_troops_no):
             self.dices_defender.append(random.randint(1,6))
         return self.dices_defender
-
 
     def Calculate(self):
         if self.dices_defender and self.dices_attacker:
@@ -383,7 +377,8 @@ class Battle():
             raise Exception('You cannot decide a battle without throwing dices on both sides.'
                             'Call both RollDices...() functions first.')
 
-class CountryCard():
+
+class CountryCard:
 
     def __init__(self, country, figure, already_traded=False):
         self.country = country
@@ -402,12 +397,13 @@ class CountryCard():
         else:
             raise Exception("The country card {self} has already been marked as traded.")
 
-class Game():
-    '''
+
+class Game:
+    """
     The Game class acts as an interface, to minimize the need of knowing
     the game's different classes and their methods.
     It offers methods with the usual actions of a game.
-    '''
+    """
 
     def __init__(self):
         # Players of this game
@@ -448,7 +444,7 @@ class Game():
             countries_file='game_data/countries.txt',
             countries_connections_file='game_data/country_connections.txt',
             continents_file='game_data/continents.txt'):
-        '''
+        """
         Initialises the game's list of country and continent objects with data from files.
         A country and continent codes are used for simplicity and storage efficiency in files,
         while defining neighbours for instance.
@@ -478,7 +474,7 @@ class Game():
 
         :return:
         Nothing
-        '''
+        """
 
         # The actual list of continents that will set for the game
         continents = []
@@ -550,14 +546,14 @@ class Game():
             raise Exception('There was a problem while reading the country card data.')
 
     def AssignPlayers(self, names_and_colors):
-        '''
+        """
         Load the players into the appropiate class.
 
         :param names_and_colors:
         A list of tuples with name and color.
 
         :return:
-        '''
+        """
         players = []
 
         for name, color in names_and_colors:
@@ -565,16 +561,15 @@ class Game():
 
         self.players = players
 
-
     def GetCountries(self, a_player, only_countries_with_more_than_one=False):
-        '''
+        """
         Returns a list with countries owned by a player.
 
         :param a_player:
         One object of the class Player
         :return:
         List collection of objects from the class Country
-        '''
+        """
         countries_from_this_player = []
         for c in self.countries:
             #print(f'c.player=[{c.player}]; a_player=[{a_player}]')
@@ -587,7 +582,6 @@ class Game():
 
         return countries_from_this_player
 
-
     def GetUnassignedCountries(self):
         unassigned_countries = []
         for c in self.countries:
@@ -595,13 +589,12 @@ class Game():
                 unassigned_countries.append(c)
         return unassigned_countries
 
-
     def InitializeCountriesDeck(self):
-        '''
+        """
         Sets the game's deck with country cards if countries are already loaded.
 
         :return:
-        '''
+        """
         if self.country_cards and len(self.country_cards) > 0:
             self.country_card_deck = self.country_cards.copy()
             random.shuffle(self.country_card_deck)
@@ -609,9 +602,9 @@ class Game():
         #print('Initialized and shuffled country cards deck.')
 
     def ShowBoardForPlayer(self, player_number):
-        '''
+        """
         Shows all the relevant information for a player during one round.
-        '''
+        """
         current_player = Player('foo','ff')
         print(f'\nCurrent player: {players[player_name].name}')
 
@@ -619,10 +612,8 @@ class Game():
         # surrounding regions with number of armies in each.
         print(f'\nCountries:')
 
-
     def ShowPlayerObjective(self, player_name):
         pass
-
 
     def CallAttack(self, country_from, country_to, troops_no):
 
@@ -630,9 +621,8 @@ class Game():
         self.battles.append(b)
         return b
 
-
     def Attack(self, country_from, country_to, dices_a, dices_d):
-        '''
+        """
         A player attacks a country and eventually conquers it.
         :param country_from:
         The country where the attack is coming from.
@@ -643,7 +633,7 @@ class Game():
         :param dices_d:
         The dices from the defender. An iterable (list or tuple) with a set of integers.
         :return:
-        '''
+        """
 
         losses_defender = 0
         losses_attacker = 0
@@ -682,16 +672,15 @@ class Game():
             country_from.armies -= remaining_attacking_troops
             country_to.armies += remaining_attacking_troops
 
-
     def DealInitialCountriesEqually(self):
-        '''
+        """
         Deals list of countries to players, dividing total between number of players.
         Modulus remains unassigned, i.e. if 10 countries and 3 players were distributed,
         one country will remain unassigned.
 
         The unassigned countries are returned, which should be assigned individually
         after throwing dices.
-        '''
+        """
 
         countries_to_deal = self.countries.copy()
         random.shuffle(countries_to_deal)
@@ -729,7 +718,7 @@ class Game():
             c.armies += number_of_troops
 
     def CheckIfWinner(self):
-        '''
+        """
         Check if the game has a winner already, evaluating whether
         each player reached one of their objectives. Only the first
         match is returned, so this should be checked after each player
@@ -738,7 +727,7 @@ class Game():
         :return:
         Returns an instance of the class Player, namely the winner.
         Otherwise returns None.
-        '''
+        """
         for p in self.players:
             for objective in p.objectives:
                 #print(objective)
@@ -748,9 +737,8 @@ class Game():
 
         return None
 
-
     def LoadWorldDominationObjective(self, percent_to_conquer):
-        '''
+        """
         Creates the world domination objective, which is based on
         the total number of countries.
 
@@ -758,7 +746,7 @@ class Game():
         A floating point number representing the percentage number of countries
         to be conquered. Must be between greater than zero and lower or equal than one.
         :return:
-        '''
+        """
         if self.countries == None or len(self.countries) == 0:
             raise Exception('Cannot do this if countries have not been loaded yet.')
         elif self.players == None or len(self.players) == 0:
@@ -767,7 +755,6 @@ class Game():
             self.world_objective = WorldDominationObjective(round(percent_to_conquer * len(self.countries)), self.countries)
             for p in self.players:
                 p.AddObjective(self.world_objective)
-
 
     def GetAmountArmiesPerTurn(self, player):
         armies = int(math.ceil(len(self.GetCountries(player)) / 2))
