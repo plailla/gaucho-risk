@@ -11,13 +11,13 @@ colors = ['Red', 'Blue', 'Green', 'Yellow', 'Black', 'Pink', 'White', 'Grey']
 
 
 def throw_dice(n, min=1, max=6):
-    '''
+    """
     Simulates throwing dices.
     :param n:
     Number of dices
     :return:
     List of N dices
-    '''
+    """
     dices = []
 
     for x in range(n):
@@ -27,7 +27,7 @@ def throw_dice(n, min=1, max=6):
 
 
 def compare_dices(dices1, dices2):
-    '''
+    """
     Compares two sets of dices and returns the winner.
     :param dices1:
     List of integers with dice numbers.
@@ -35,7 +35,7 @@ def compare_dices(dices1, dices2):
     List of integers with dice numbers.
     :return:
     List of integers with winning dice numbers.
-    '''
+    """
     ordered_1 = sorted(dices1)
     ordered_2 = sorted(dices2)
     for x in range(min(len(ordered_1), len(ordered_2))):
@@ -131,8 +131,7 @@ def prompt_players(game):
         print("Player {} is {} with color {}.\n".format(x + 1, name, p_color))
         names_and_colors.append((name, p_color))
 
-    print("Because you cannot have people pick colors."
-          "You'll have a bunch of guys fighting over who's Mr. Black.\n")
+    print("Because you cannot have people pick colors. You'll have a bunch of guys fighting over who's Mr. Black.\n")
 
     game.assign_players(names_and_colors)
 

@@ -213,8 +213,9 @@ class ConquestObjetive(Objective):
         self.continents_to_conquer = continents_to_conquer
 
     def __str__(self):
-        text = f'Conquer '
+        text = f'Conquer'
         if self.continents_to_conquer and len(self.continents_to_conquer):
+            text += " "
             for cont in self.continents_to_conquer:
                 text += f'the continent of {cont.name}, '
             text = re.sub(r', $', '', text)
