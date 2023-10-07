@@ -134,7 +134,7 @@ def prompt_players(game):
     print("Because you cannot have people pick colors."
           "You'll have a bunch of guys fighting over who's Mr. Black.\n")
 
-    game.AssignPlayers(names_and_colors)
+    game.assign_players(names_and_colors)
 
     helpers.press_any_key()
 
@@ -157,19 +157,19 @@ def deal_initial_countries(game):
 
     helpers.press_any_key()
 
-    game.DealInitialCountriesEqually()
+    game.deal_initial_countries_equally()
 
     for p in game.players:
-        p_c = game.GetCountries(p)
+        p_c = game.get_countries(p)
         print(f'\n{p} got {len(p_c)}:')
-        for c in game.GetCountries(p):
+        for c in game.get_countries(p):
             print(c)
 
     helpers.press_any_key()
 
 
 def deal_rest_countries_dice(game):
-    free_countries = game.GetUnassignedCountries()
+    free_countries = game.get_unassigned_countries()
     players_dices = []
     winner = None
 
@@ -203,11 +203,11 @@ def demo_load_players(game, n):
 
 
 def demo_deal_initial_countries(game):
-    game.DealInitialCountriesEqually()
+    game.deal_initial_countries_equally()
 
 
 def demo_deal_rest_countries_dice(game):
-    free_countries = game.GetUnassignedCountries()
+    free_countries = game.get_unassigned_countries()
     players_dices = []
 
     for c in free_countries:
@@ -223,13 +223,13 @@ def demo_deal_rest_countries_dice(game):
         ### What happens if two people get the same? or three?
 
     for p in game.players:
-        game.UpdatePlayerCountries(p)
+        game.update_player_countries(p)
 
 
 def show_player_countries(player, game):
     print(f'Countries from {player}:')
     x = 0
-    for c in game.GetCountries(player):
+    for c in game.get_countries(player):
         x += 1
         print(f'{x} - {c}')
 
@@ -237,7 +237,7 @@ def show_player_countries(player, game):
 def show_player_countries_which_can_attack(player, game):
     print(f'\nCountries from {player} that can attack:')
     x = 0
-    for c in game.GetCountries(player, True):
+    for c in game.get_countries(player, True):
         x += 1
         print(f'{x} - {c}')
 
@@ -250,7 +250,7 @@ def attack_round(player, game):
     while not finished_attacking:
         show_player_countries_which_can_attack(player, game)
 
-        player_cs = game.GetCountries(player, True)
+        player_cs = game.get_countries(player, True)
 
         if len(player_cs) > 0:
 
@@ -297,12 +297,12 @@ def attack_round(player, game):
                             f'How many troops are attacking? (1 to {max_attack_troops}) ',None, 1, max_attack_troops)
 
                     # game.Attack(attacker_c, attacked_c, dices_attacker, dices_defender)
-                    battle = game.CallAttack(attacker_c, attacked_c, troops_no)
+                    battle = game.call_attack(attacker_c, attacked_c, troops_no)
 
                     print(f"\nFollowing battle will take place:\n{battle}")
 
                     input(f'\n{player.name}, press any key to throw {troops_no} dices...')
-                    battle.RollDicesAttacker()
+                    battle.roll_dices_attacker()
                     print(f'{player.name} got dices {battle.dices_attacker}')
 
                     attacker_loses_before_fighting = True
@@ -312,17 +312,17 @@ def attack_round(player, game):
 
                     if attacker_loses_before_fighting:
                         print(f'Ones means that the attacker cannot win, defender does not need to throw dices.')
-                        battle.RollDicesDefender() # Because the object still needs dices to calculate
+                        battle.roll_dices_defender() # Because the object still needs dices to calculate
                     else:
                         input(f'\n{attacked_c.player.name}, press any key to throw {attacked_c.armies} dices...')
-                        battle.RollDicesDefender()
+                        battle.roll_dices_defender()
                         print(f'{attacked_c.player.name} got dices {battle.dices_defender}')
 
-                    battle.Calculate()
+                    battle.calculate()
 
                     if battle.defender_lost_country:
-                        game.UpdatePlayerCountries(battle.defending_player)
-                        game.UpdatePlayerCountries(battle.attacking_player)
+                        game.update_player_countries(battle.defending_player)
+                        game.update_player_countries(battle.attacking_player)
 
                     print(f"\nBattle results:\n{battle}")
                     print(f'\nStatus after battle:\n - Attacker {attacker_c}\n - Defender {attacked_c}')
@@ -347,7 +347,7 @@ def movement_round(player, game):
 
     print(f'Current player: {game.current_player}')
 
-    countries_relocate = game.GetCountries(player, True)
+    countries_relocate = game.get_countries(player, True)
 
     done_moving = False
 
@@ -414,7 +414,7 @@ def movement_round(player, game):
             print(f'Player has no countries with more than one troop that could relocate.')
             done_moving = True
 
-    game.AdvanceNextPlayer()
+    game.advance_next_player()
 
 
 def deployment_round(player, game):
@@ -423,8 +423,8 @@ def deployment_round(player, game):
 
     print(f'Current player: {game.current_player}')
 
-    armies_no = game.GetAmountArmiesPerTurn(player)
-    p_countries = game.GetCountries(player)
+    armies_no = game.get_amount_armies_per_turn(player)
+    p_countries = game.get_countries(player)
     p_countries_no = len(p_countries)
     print(f'{player.name} has {p_countries_no} and thus gets {armies_no} to deploy into the map this round.')
 
@@ -441,11 +441,11 @@ def deployment_round(player, game):
     print(f'{player.name} has placed all available armies on the map.')
     show_player_countries(player, game)
 
-    game.AdvanceNextPlayer()
+    game.advance_next_player()
 
 
 def check_if_winner(game):
-    winner_player = game.CheckIfWinner()
+    winner_player = game.check_if_winner()
     if winner_player:
         show_winner_banner(winner_player)
         return True
@@ -513,7 +513,7 @@ def initialize_objectives(game):
     objectives_deck_deal = objectives.copy()
     random.shuffle(objectives_deck_deal)
     for p in game.players:
-        p.AddObjective(objectives_deck_deal.pop())
+        p.add_objective(objectives_deck_deal.pop())
 
     for p in game.players:
         print(f"{p.name} has following objectives:")
@@ -522,7 +522,7 @@ def initialize_objectives(game):
 
     def country_card_after_attacking(game, player):
         print(f"{player.name} has conquered at least one country, she/he receives a country card.")
-        game.GiveCountryCardToPlayer(player)
+        game.give_country_card_to_player(player)
 
     def trad_each_country_card(game, player):
 
@@ -551,7 +551,7 @@ def initialize_objectives(game):
                     if card_no > 0:
                         selected_card = non_used_cards[card_no-1]
                         print(f"Trading {selected_card}")
-                        game.TradeCardPosessedCountry(selected_card)
+                        game.trade_card_posessed_country(selected_card)
                     else:
                         finished_trading = True
 
@@ -588,11 +588,11 @@ def play():
 
     # Loading map data from files
     print('Loading map data from files...')
-    game.LoadMapFromFile()
+    game.load_map_from_file()
 
-    game.LoadCards()
+    game.load_cards()
 
-    game.InitializeCountriesDeck()
+    game.initialize_countries_deck()
 
     # for c in game.countries:
     #   print(f'Country {c.name} loaded.')
@@ -606,19 +606,19 @@ def play():
     # Raffle for the rest of remaining cards if needed
     demo_deal_rest_countries_dice(game)
 
-    game.LoadWorldDominationObjective(0.6)
+    game.load_world_domination_objective(0.6)
     print(f'\nWorld domination set to {game.world_objective.amount_countries}.\n')
 
     initialize_objectives(game)
 
-    game.AdvanceNextPlayer()
+    game.advance_next_player()
 
-    game.AddTroopsTooAllCountries(1)
+    game.add_troops_too_all_countries(1)
     for n in (2, 1):
         for p in game.players:
             # print(f'{p} adding now {n} armies.')
             for x in range(n):
-                p_cs = game.GetCountries(p)
+                p_cs = game.get_countries(p)
                 c = p_cs[random.randint(0, len(p_cs) - 1)]
                 # print(f'Adding randomly one army to: {c}')
                 c.armies += 1

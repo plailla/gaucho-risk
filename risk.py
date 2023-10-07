@@ -35,7 +35,7 @@ class Player:
     def __str__(self):
         return f"{self.name} ({self.color})"
 
-    def AddObjective(self, objective):
+    def add_objective(self, objective):
         self.objectives.append(objective)
 
 
@@ -115,15 +115,15 @@ class Continent:
     def __str__(self):
         return f"{self.name} ({len(self.countries)} countries)"
 
-    def SetCountries(self, countries):
+    def set_countries(self, countries):
         self.countries = countries
 
-    def AddCountry(self, country):
+    def add_country(self, country):
         if not self.countries:
             self.countries = []
         self.countries.append(country)
 
-    def ConqueredByPlayer(self, player):
+    def conquered_by_player(self, player):
         conquered_by_player = True
         for c in self.countries:
             if c.player != player:
@@ -140,7 +140,7 @@ class Objective:
         pass
 
 
-    def IsAchieved(self, player):
+    def is_achieved(self, player):
         raise NotImplementedError('Subclass must implement this method.')
 
 
@@ -154,9 +154,9 @@ class WorldDominationObjective(Objective):
         self.all_countries = all_countries
 
     def __str__(self):
-        return('World domination - Conquer a total of {} countries'.format(self.amount_countries))
+        return f'World domination - Conquer a total of {self.amount_countries} countries'
 
-    def IsAchieved(self, pl):
+    def is_achieved(self, pl):
         p_countries = []
         for c in self.all_countries:
             if c.player == pl:
@@ -182,7 +182,7 @@ class AnnihilationObjetive:
     def __str__(self):
         return f"Eliminate {self.player}"
 
-    def IsAchieved(self,player):
+    def is_achieved(self, player):
         if len(self.player.countries) == 0:
             return True
         else:
@@ -225,7 +225,7 @@ class ConquestObjetive(Objective):
             text = re.sub(r', $', '', text)
         return text
 
-    def IsAchieved(self, player):
+    def is_achieved(self, player):
         """
 
         :param player:
@@ -308,19 +308,22 @@ class Battle:
 
         return text
 
-    def RollDicesAttacker(self):
+    def roll_dices_attacker(self):
         self.dices_attacker = []
         for x in range(self.attacker_troops_no):
             self.dices_attacker.append(random.randint(1,6))
         return self.dices_attacker
 
-    def RollDicesDefender(self):
+    def roll_dices_defender(self):
         self.dices_defender = []
         for x in range(self.defender_troops_no):
             self.dices_defender.append(random.randint(1,6))
         return self.dices_defender
 
-    def Calculate(self):
+    def calculate(self):
+        """
+
+        """
         if self.dices_defender and self.dices_attacker:
             # Should we also check if it's been calculated already?
 
@@ -391,7 +394,7 @@ class CountryCard:
             text += " (already traded)"
         return text
 
-    def Trade(self):
+    def trade(self):
         if not self.already_traded:
             self.already_traded = True
         else:
@@ -429,17 +432,16 @@ class Game:
         self.current_player = None
         self.player_conquered_territory = False
 
-    def InitialSetupReady(self):
+    def initial_setup_ready(self):
         if self.players == None or len(self.players) < 2:
             return False
 
-        if len(self.GetUnassignedCountries()) > 0:
+        if len(self.get_unassigned_countries()) > 0:
             return False
 
         return True
 
-
-    def LoadMapFromFile(
+    def load_map_from_file(
             self,
             countries_file='game_data/countries.txt',
             countries_connections_file='game_data/country_connections.txt',
@@ -506,7 +508,7 @@ class Game:
                 new_country.continent = continents_dict[continent_id]
                 self.countries.append(new_country)
                 countries_dict[country_id] = new_country
-                continents_dict[continent_id].AddCountry(new_country)
+                continents_dict[continent_id].add_country(new_country)
             countries_fp.close()
 
         with open(countries_connections_file, 'r') as connections_fp:
@@ -522,7 +524,7 @@ class Game:
 
         self.countries_by_id = countries_dict
 
-    def LoadCards(self,cards_file="game_data/card_figures.txt",country_figures_file="game_data/countries_figures.txt"):
+    def load_cards(self, cards_file="game_data/card_figures.txt", country_figures_file="game_data/countries_figures.txt"):
         new_cards_deck = []
 
         figures = {}
@@ -545,7 +547,7 @@ class Game:
         except:
             raise Exception('There was a problem while reading the country card data.')
 
-    def AssignPlayers(self, names_and_colors):
+    def assign_players(self, names_and_colors):
         """
         Load the players into the appropiate class.
 
@@ -561,7 +563,7 @@ class Game:
 
         self.players = players
 
-    def GetCountries(self, a_player, only_countries_with_more_than_one=False):
+    def get_countries(self, a_player, only_countries_with_more_than_one=False):
         """
         Returns a list with countries owned by a player.
 
@@ -582,14 +584,14 @@ class Game:
 
         return countries_from_this_player
 
-    def GetUnassignedCountries(self):
+    def get_unassigned_countries(self):
         unassigned_countries = []
         for c in self.countries:
             if c.player == None:
                 unassigned_countries.append(c)
         return unassigned_countries
 
-    def InitializeCountriesDeck(self):
+    def initialize_countries_deck(self):
         """
         Sets the game's deck with country cards if countries are already loaded.
 
@@ -601,7 +603,7 @@ class Game:
 
         #print('Initialized and shuffled country cards deck.')
 
-    def ShowBoardForPlayer(self, player_number):
+    def show_board_for_player(self, player_number):
         """
         Shows all the relevant information for a player during one round.
         """
@@ -612,16 +614,16 @@ class Game:
         # surrounding regions with number of armies in each.
         print(f'\nCountries:')
 
-    def ShowPlayerObjective(self, player_name):
+    def show_player_objective(self, player_name):
         pass
 
-    def CallAttack(self, country_from, country_to, troops_no):
+    def call_attack(self, country_from, country_to, troops_no):
 
         b = Battle(country_from, country_to, troops_no)
         self.battles.append(b)
         return b
 
-    def Attack(self, country_from, country_to, dices_a, dices_d):
+    def attack(self, country_from, country_to, dices_a, dices_d):
         """
         A player attacks a country and eventually conquers it.
         :param country_from:
@@ -672,7 +674,7 @@ class Game:
             country_from.armies -= remaining_attacking_troops
             country_to.armies += remaining_attacking_troops
 
-    def DealInitialCountriesEqually(self):
+    def deal_initial_countries_equally(self):
         """
         Deals list of countries to players, dividing total between number of players.
         Modulus remains unassigned, i.e. if 10 countries and 3 players were distributed,
@@ -703,7 +705,7 @@ class Game:
         # return the unassigned countries
         return countries_to_deal
 
-    def AddTroopsTooAllCountries(self, number_of_troops=1):
+    def add_troops_too_all_countries(self, number_of_troops=1):
         """
         Adds a number of armies to all countries. Meant to be used starting the game.
 
@@ -717,7 +719,7 @@ class Game:
         for c in self.countries:
             c.armies += number_of_troops
 
-    def CheckIfWinner(self):
+    def check_if_winner(self):
         """
         Check if the game has a winner already, evaluating whether
         each player reached one of their objectives. Only the first
@@ -731,13 +733,13 @@ class Game:
         for p in self.players:
             for objective in p.objectives:
                 #print(objective)
-                if objective.IsAchieved(p):
+                if objective.is_achieved(p):
                     #print(f'{p.name} achieved:\n{objective}')
                     return p
 
         return None
 
-    def LoadWorldDominationObjective(self, percent_to_conquer):
+    def load_world_domination_objective(self, percent_to_conquer):
         """
         Creates the world domination objective, which is based on
         the total number of countries.
@@ -754,23 +756,23 @@ class Game:
         else:
             self.world_objective = WorldDominationObjective(round(percent_to_conquer * len(self.countries)), self.countries)
             for p in self.players:
-                p.AddObjective(self.world_objective)
+                p.add_objective(self.world_objective)
 
-    def GetAmountArmiesPerTurn(self, player):
-        armies = int(math.ceil(len(self.GetCountries(player)) / 2))
+    def get_amount_armies_per_turn(self, player):
+        armies = int(math.ceil(len(self.get_countries(player)) / 2))
         if armies < 3:
             armies = self.min_armies_per_turn
         return armies
 
-    def UpdatePlayerCountries(self, player):
-        player.countries = self.GetCountries(player)
+    def update_player_countries(self, player):
+        player.countries = self.get_countries(player)
 
-    def TradeCardPosessedCountry(self, card):
+    def trade_card_posessed_country(self, card):
         num_armies = 2
         card.already_traded = True
         return num_armies
 
-    def TradeCardsFiguresSet(self, player, cards):
+    def trade_cards_figures_set(self, player, cards):
 
         num_required_cards = 3
 
@@ -795,13 +797,13 @@ class Game:
         else:
             raise Exception(f'To trade in cards you need {num_required_cards} cards.')
 
-    def GiveCountryCardToPlayer(self, player):
+    def give_country_card_to_player(self, player):
         a_card = self.country_card_deck.pop()
         a_card.already_traded = False
         player.cards.add(a_card)
 
-    def AdvanceNextPlayer(self):
-        if self.InitialSetupReady():
+    def advance_next_player(self):
+        if self.initial_setup_ready():
             if self.current_player:
                 # Iterate through the list of players and get the next one,
                 # if we are at the last one then return the first one
